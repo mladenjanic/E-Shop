@@ -15,10 +15,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    'crispy_forms',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    
     'core'
 ]
 
@@ -88,4 +89,7 @@ AUTHENTICATION_BACKENDS = (
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',)
 
+LOGIN_REDIRECT_URL = '/'
 SITE_ID = 1
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
