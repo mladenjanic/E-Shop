@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.generic import DetailView, ListView, View
 
 from .forms import CheckoutForm
-from .models import Item, Order, OrderItem
+from .models import Item, Order, OrderItem, BillingAddress
 
 
 class HomeView(ListView):
@@ -41,9 +41,32 @@ class CheckoutView(View):
 
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
-        if form.is_valid():
-            print('Valid')
-            return redirect('core:checkout')
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            if form.is_valid():
+                street_address = form.cleaned_data.get('street_address')
+                appartment_address = form.cleaned_data.get('appartment_address')
+                country = form.cleaned_data.get('country')
+                zipcode = form.cleaned_data.get('zipcode')
+                same_billing_address = form.cleaned_data.get('same_billing_address')
+                save_info = form.cleaned_data.get('save_info')
+                payment_option = form.cleaned_data.get('payment_option')
+                billing_address = BillingAddress(
+                    user=self.request.user,
+                    street_address = street_address,
+                    appartment_address = appartment_address,
+                    country = country,
+                    zipcode = zipcode
+            )
+                billing_address.save()
+            
+                return redirect('core:checkout')
+            return render(self.request, 'order_summary.html', context)
+        except ObjectDoesNotExist:
+            messages.error(self.request, "You don't have an active order")
+            return redirect('/')
+        
+        return redirect('core:checkout')
 
 
 
