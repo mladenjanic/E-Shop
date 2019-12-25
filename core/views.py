@@ -48,8 +48,8 @@ class CheckoutView(View):
                 appartment_address = form.cleaned_data.get('appartment_address')
                 country = form.cleaned_data.get('country')
                 zipcode = form.cleaned_data.get('zipcode')
-                same_billing_address = form.cleaned_data.get('same_billing_address')
-                save_info = form.cleaned_data.get('save_info')
+                # same_billing_address = form.cleaned_data.get('same_billing_address')
+                # save_info = form.cleaned_data.get('save_info')
                 payment_option = form.cleaned_data.get('payment_option')
                 billing_address = BillingAddress(
                     user=self.request.user,
@@ -59,6 +59,8 @@ class CheckoutView(View):
                     zipcode = zipcode
             )
                 billing_address.save()
+                order.billing_address = billing_address
+                order.save()
             
                 return redirect('core:checkout')
             return render(self.request, 'order_summary.html', context)
@@ -67,6 +69,11 @@ class CheckoutView(View):
             return redirect('/')
         
         return redirect('core:checkout')
+
+
+class PaymentView(View):
+    def get(self, *args, **kwargs):
+        return render(self.request, 'payment.html')
 
 
 
